@@ -55,6 +55,14 @@ public class OrganizationContainerImpl extends BlueOrganizationContainer {
 
     }
 
+    /**
+     * Creates a new JenkinsOrganizationFolder.
+     *
+     * If trying to create something that already exists, it will return success.
+     *
+     * @param createRequest
+     * @return
+     */
     @Override
     public BlueOrganizationCreateResponse createOrganization(@JsonBody BlueOrganizationCreateRequest createRequest) {
         Jenkins j = Jenkins.getInstance();

@@ -27,6 +27,11 @@ public abstract class BlueOrganization extends Resource {
      */
     public abstract BlueUserContainer getUsers();
 
+    /**
+     * Deletes this organization.
+     *
+     * TODO: make the url / note /delete
+     */
     @DELETE @WebMethod(name = "delete")
     public abstract void deleteOrganiztion();
 }

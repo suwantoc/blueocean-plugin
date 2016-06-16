@@ -19,10 +19,19 @@ public abstract class BlueOrganizationContainer extends Container<BlueOrganizati
         return "organizations";
     }
 
-    @POST @WebMethod(name = "")
-    @JsonResponse
+
+    /**
+     * Creates an organization. If organization exists, return success.
+     *
+     * @param blueOrganizationCreateRequest Name of organization to be created
+     * @return Name of the created organization
+     */
+    @POST @WebMethod(name = "") @JsonResponse
     public abstract BlueOrganizationCreateResponse createOrganization(BlueOrganizationCreateRequest blueOrganizationCreateRequest);
 
+    /**
+     * Request body wrapper for organization creation request
+     */
     public static class BlueOrganizationCreateRequest {
         private String name;
 
@@ -35,6 +44,9 @@ public abstract class BlueOrganizationContainer extends Container<BlueOrganizati
         }
     }
 
+    /**
+     * Response body wrapper for organization creation request
+     */
     public static class BlueOrganizationCreateResponse {
         private String name;
 

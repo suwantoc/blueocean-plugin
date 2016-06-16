@@ -76,6 +76,9 @@ public class OrganizationImpl extends BlueOrganization {
         return users;
     }
 
+    /**
+     * Deletes this organization.
+     */
     @Override
     public void deleteOrganiztion() {
         if(getName().equals(Jenkins.getInstance().getDisplayName().toLowerCase())) {

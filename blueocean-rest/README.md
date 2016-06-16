@@ -46,7 +46,12 @@ BlueOcean rest API base URL is:
       } 
     ]
 
-$$
+## Lists organizations
+    curl -v -X GET  http://localhost:8080/jenkins/blue/rest/organizations/
+
+    [{
+      "name" : "jenkins"
+    }]
 ## Get organization details
 
     curl -v -X GET  http://localhost:8080/jenkins/blue/rest/organizations/jenkins
@@ -54,6 +59,19 @@ $$
     {
       "name" : "jenkins"
     }
+
+## Creates an organization
+
+
+    curl -H"Content-Type: application/json" -d "{\"name\":\"test\"}" http://localhost:8080/jenkins/blue/rest/organizations/
+
+    {
+      "name" : "test"
+    }
+
+## Deletes an orgaization
+
+    curl -v -X DELETE  http://localhost:8080/jenkins/blue/rest/organizations/jenkins/delete
 
 ## Get a Pipeline
 
