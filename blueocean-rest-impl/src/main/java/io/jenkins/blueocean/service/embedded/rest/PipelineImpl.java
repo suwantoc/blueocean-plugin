@@ -26,23 +26,22 @@ import static io.jenkins.blueocean.service.embedded.rest.PipelineContainerImpl.i
  */
 public class PipelineImpl extends BluePipeline {
     /*package*/ final Job job;
+    final OrganizationImpl organization;
 
     private final ItemGroup folder;
-    protected PipelineImpl(ItemGroup folder, Job job) {
+    protected PipelineImpl(OrganizationImpl organization, ItemGroup folder, Job job) {
+        this.organization = organization;
         this.job = job;
         this.folder = folder;
     }
 
-    public PipelineImpl(ItemGroup folder) {
-        this(folder, null);
+    public PipelineImpl(OrganizationImpl organization, Job job) {
+        this(organization, null, job);
     }
 
-    public PipelineImpl(Job job) {
-        this(null, job);
-    }
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return organization.getName();
     }
 
     @Override
@@ -65,7 +64,7 @@ public class PipelineImpl extends BluePipeline {
         if(job.getLastBuild() == null){
             return null;
         }
-        return AbstractRunImpl.getBlueRun(job.getLastBuild());
+        return AbstractRunImpl.getBlueRun(this, job.getLastBuild());
     }
 
     @Override
@@ -123,19 +122,19 @@ public class PipelineImpl extends BluePipeline {
 
     public BluePipeline getPipelines(String name){
         assert folder != null;
-        return getPipelines(folder, name);
+        return getPipelines(organization, folder, name);
     }
 
-    protected static BluePipeline getPipelines(ItemGroup itemGroup, String name){
+    protected static BluePipeline getPipelines(OrganizationImpl organization, ItemGroup itemGroup, String name){
         Item item = itemGroup.getItem(name);
         if(item instanceof BuildableItem){
             if(item instanceof MultiBranchProject){
-                return new MultiBranchPipelineImpl((MultiBranchProject) item);
+                return new MultiBranchPipelineImpl(organization, (MultiBranchProject) item);
             }else if(!isMultiBranchProjectJob((BuildableItem) item) && item instanceof Job){
-                return new PipelineImpl(itemGroup, (Job) item);
+                return new PipelineImpl(organization,itemGroup, (Job) item);
             }
         }else if(item instanceof ItemGroup){
-            return new PipelineImpl((ItemGroup) item, null);
+            return new PipelineImpl(organization,(ItemGroup) item, null);
         }
         throw new ServiceException.NotFoundException(String.format("Pipeline %s not found", name));
     }

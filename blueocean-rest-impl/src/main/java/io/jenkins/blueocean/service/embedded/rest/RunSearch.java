@@ -33,7 +33,7 @@ public class RunSearch extends OmniSearch<BlueRun> {
 
     @Override
     public Pageable<BlueRun> search(Query q) {
-
+/*
         String pipeline = q.param("pipeline", false);
 
         boolean latestOnly = q.param("latestOnly", Boolean.class);
@@ -57,9 +57,13 @@ public class RunSearch extends OmniSearch<BlueRun> {
             return Pageables.empty();
         }
         return Pageables.wrap(findRuns(null));
+        */
+
+        return null;
     }
 
-    public static Iterable<BlueRun> findRuns(Job pipeline){
+    public static Iterable<BlueRun> findRuns(PipelineImpl pipe, Job pipeline){
+
         final List<BlueRun> runs = new ArrayList<>();
         Iterable<Job> pipelines;
         if(pipeline != null){
@@ -71,14 +75,17 @@ public class RunSearch extends OmniSearch<BlueRun> {
             RunList<? extends Run> runList = p.getBuilds();
 
             for (Run r : runList) {
-                runs.add(AbstractRunImpl.getBlueRun(r));
+                runs.add(AbstractRunImpl.getBlueRun(pipe,r));
             }
         }
 
         return runs;
+
+
     }
 
     private BlueRun getLatestRun(Job job){
+        /*
         if(job != null){
             Run r = job.getLastBuild();
             if(r != null) {
@@ -86,6 +93,8 @@ public class RunSearch extends OmniSearch<BlueRun> {
             }
         }
         return null;
+        */
+        return  null;
     }
 
 }

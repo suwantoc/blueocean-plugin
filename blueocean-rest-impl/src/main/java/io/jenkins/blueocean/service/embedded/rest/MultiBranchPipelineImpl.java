@@ -28,14 +28,16 @@ import java.util.List;
  */
 public class MultiBranchPipelineImpl extends BlueMultiBranchPipeline {
     /*package*/ final MultiBranchProject mbp;
+    final OrganizationImpl organization;
 
-    public MultiBranchPipelineImpl(MultiBranchProject mbp) {
+    public MultiBranchPipelineImpl(OrganizationImpl organization, MultiBranchProject mbp) {
         this.mbp = mbp;
+        this.organization = organization;
     }
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return organization.getName();
     }
 
 

@@ -7,6 +7,7 @@ import io.jenkins.blueocean.rest.model.BlueOrganization;
 import io.jenkins.blueocean.rest.model.BluePipelineContainer;
 import io.jenkins.blueocean.rest.model.BlueUserContainer;
 import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.jenkinsorganizations.JenkinsOrganizationFolder;
 import org.kohsuke.stapler.WebMethod;
 import org.kohsuke.stapler.verb.DELETE;
 import org.kohsuke.stapler.verb.PUT;
@@ -23,24 +24,30 @@ import java.io.IOException;
 public class OrganizationImpl extends BlueOrganization {
 
     UserContainerImpl users;
-    /**
-     * In embedded mode, there's only one organization
-     */
-    public static final OrganizationImpl INSTANCE = new OrganizationImpl();
+    JenkinsOrganizationFolder organizationFolder;
 
-    private OrganizationImpl() {
+    public OrganizationImpl(JenkinsOrganizationFolder organizationFolder) {
+        this.organizationFolder = organizationFolder;
         users = new UserContainerImpl();
+    }
+
+    public OrganizationImpl() {
+        this(null);
     }
     /**
      * In embedded mode, there's only one organization
      */
     public String getName() {
-        return Jenkins.getInstance().getDisplayName().toLowerCase();
+        if(organizationFolder != null) {
+            return organizationFolder.getDisplayName().toLowerCase();
+        } else {
+            return Jenkins.getInstance().getDisplayName().toLowerCase();
+        }
     }
 
     @Override
     public BluePipelineContainer getPipelines() {
-        return new PipelineContainerImpl();
+        return new PipelineContainerImpl(this);
     }
 
     @WebMethod(name="") @DELETE
@@ -67,5 +74,17 @@ public class OrganizationImpl extends BlueOrganization {
     @Override
     public BlueUserContainer getUsers() {
         return users;
+    }
+
+    @Override
+    public void deleteOrganiztion() {
+        if(getName().equals(Jenkins.getInstance().getDisplayName().toLowerCase())) {
+            throw new ServiceException.BadRequestExpception("Default organization can not be deleted");
+        }
+        try {
+            organizationFolder.delete();
+        } catch (Throwable t) {
+            throw new ServiceException.UnexpectedErrorException("Could not remove organization", t);
+        }
     }
 }

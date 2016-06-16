@@ -15,8 +15,8 @@ import java.util.Map;
  * @author Vivek Pandey
  */
 public class FreeStyleRunImpl extends AbstractRunImpl<FreeStyleBuild> {
-    public FreeStyleRunImpl(FreeStyleBuild run) {
-        super(run);
+    public FreeStyleRunImpl(PipelineImpl pipeline, FreeStyleBuild run) {
+        super(pipeline, run);
     }
 
     @Override

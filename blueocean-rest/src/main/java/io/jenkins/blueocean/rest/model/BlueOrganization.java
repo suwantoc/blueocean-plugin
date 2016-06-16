@@ -1,6 +1,10 @@
 package io.jenkins.blueocean.rest.model;
 
+import org.kohsuke.stapler.WebMethod;
 import org.kohsuke.stapler.export.Exported;
+import org.kohsuke.stapler.export.ExportedBean;
+import org.kohsuke.stapler.json.JsonResponse;
+import org.kohsuke.stapler.verb.DELETE;
 
 /**
  * API endpoint for an organization that houses all the pipelines.
@@ -23,5 +27,7 @@ public abstract class BlueOrganization extends Resource {
      */
     public abstract BlueUserContainer getUsers();
 
+    @DELETE @WebMethod(name = "delete")
+    public abstract void deleteOrganiztion();
 }
 

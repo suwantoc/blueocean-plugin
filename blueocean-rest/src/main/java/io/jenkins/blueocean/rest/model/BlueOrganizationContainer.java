@@ -2,6 +2,10 @@ package io.jenkins.blueocean.rest.model;
 
 import hudson.ExtensionPoint;
 import io.jenkins.blueocean.rest.ApiRoutable;
+import org.kohsuke.stapler.WebMethod;
+import org.kohsuke.stapler.json.JsonResponse;
+import org.kohsuke.stapler.verb.DELETE;
+import org.kohsuke.stapler.verb.POST;
 
 /**
  * This is the head of the blue ocean API.
@@ -13,5 +17,33 @@ public abstract class BlueOrganizationContainer extends Container<BlueOrganizati
     @Override
     public final String getUrlName() {
         return "organizations";
+    }
+
+    @POST @WebMethod(name = "")
+    @JsonResponse
+    public abstract BlueOrganizationCreateResponse createOrganization(BlueOrganizationCreateRequest blueOrganizationCreateRequest);
+
+    public static class BlueOrganizationCreateRequest {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public void setName(String name) {
+            this.name = name;
+        }
+    }
+
+    public static class BlueOrganizationCreateResponse {
+        private String name;
+
+        public String getName() {
+            return name;
+        }
+
+        public BlueOrganizationCreateResponse(String name) {
+            this.name = name;
+        }
     }
 }

@@ -24,7 +24,7 @@ public class BranchContainerImpl extends BluePipelineContainer {
     public BluePipeline get(String name) {
         Job job = pipeline.mbp.getBranch(name);
         if(job != null){
-            return new BranchImpl(job);
+            return new BranchImpl(pipeline.organization,job);
         }
         return null;
     }
@@ -34,7 +34,7 @@ public class BranchContainerImpl extends BluePipelineContainer {
         List<BluePipeline> branches = new ArrayList<>();
         Collection<Job> jobs = pipeline.mbp.getAllJobs();
         for(Job j: jobs){
-            branches.add(new BranchImpl(j));
+            branches.add(new BranchImpl(pipeline.organization, j));
         }
         return branches.iterator();
     }

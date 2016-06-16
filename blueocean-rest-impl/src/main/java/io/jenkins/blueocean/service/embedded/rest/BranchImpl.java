@@ -20,8 +20,8 @@ public class BranchImpl extends PipelineImpl {
 
     private static final String PULL_REQUEST = "pullRequest";
 
-    public BranchImpl(Job job) {
-        super(job);
+    public BranchImpl(OrganizationImpl organization, Job job) {
+        super(organization, job);
     }
 
     @Exported(name = PULL_REQUEST, inline = true)

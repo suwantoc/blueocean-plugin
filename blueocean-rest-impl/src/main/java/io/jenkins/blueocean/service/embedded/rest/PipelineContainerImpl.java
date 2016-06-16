@@ -10,6 +10,7 @@ import io.jenkins.blueocean.rest.model.BluePipeline;
 import io.jenkins.blueocean.rest.model.BluePipelineContainer;
 import jenkins.branch.MultiBranchProject;
 import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.jenkinsorganizations.JenkinsOrganizationFolder;
 import org.jenkinsci.plugins.workflow.job.WorkflowJob;
 
 import java.util.ArrayList;
@@ -21,23 +22,34 @@ import java.util.List;
  * @author Vivek Pandey
  */
 public class PipelineContainerImpl extends BluePipelineContainer {
+    private final OrganizationImpl organization;
     private final ItemGroup itemGroup;
 
-    public PipelineContainerImpl(ItemGroup itemGroup) {
-        this.itemGroup = itemGroup;
+    public PipelineContainerImpl(OrganizationImpl organization) {
+        this.organization = organization;
+        this.itemGroup = null;
     }
 
-    public PipelineContainerImpl() {
-        this.itemGroup = null;
+    public PipelineContainerImpl(OrganizationImpl organization, ItemGroup itemGroup) {
+        this.organization = organization;
+        this.itemGroup = itemGroup;
+
     }
 
     @Override
     public BluePipeline get(String name) {
         Item item;
-        if(itemGroup == null){
-            item = Jenkins.getActiveInstance().getItem(name);
-        }else{
+
+        if(itemGroup != null) {
             item = itemGroup.getItem(name);
+        } else if(organization.organizationFolder != null) {
+            item = organization.organizationFolder.getItem(name);
+        } else {
+            item = Jenkins.getInstance().getItem(name);
+        }
+
+        if(item instanceof JenkinsOrganizationFolder) {
+            throw new ServiceException.NotImplementedException(("This si an organization folder"));
         }
 
         if(item == null){
@@ -46,12 +58,12 @@ public class PipelineContainerImpl extends BluePipelineContainer {
 
         if (item instanceof BuildableItem) {
             if (item instanceof MultiBranchProject) {
-                return new MultiBranchPipelineImpl((MultiBranchProject) item);
+                return new MultiBranchPipelineImpl(organization, (MultiBranchProject) item);
             } else if (!isMultiBranchProjectJob((BuildableItem) item) && item instanceof Job) {
-                return new PipelineImpl((Job) item);
+                return new PipelineImpl(organization, (Job) item);
             }
         } else if (item instanceof ItemGroup) {
-            return new PipelineFolderImpl((ItemGroup) item);
+            return new PipelineFolderImpl(organization, (ItemGroup) item);
         }
 
         // TODO: I'm going to turn this into a decorator annotation
@@ -61,10 +73,12 @@ public class PipelineContainerImpl extends BluePipelineContainer {
     @Override
     @SuppressWarnings("unchecked")
     public Iterator<BluePipeline> iterator() {
-        if(itemGroup != null){
-            return getPipelines(itemGroup.getItems());
+        if(itemGroup != null) {
+            return getPipelines(organization, itemGroup.getItems());
+        } else if (organization.organizationFolder != null) {
+            return getPipelines(organization, organization.organizationFolder.getItems());
         }else{
-            return getPipelines(Jenkins.getActiveInstance().getItems(TopLevelItem.class));
+            return getPipelines(organization, Jenkins.getInstance().getItems(TopLevelItem.class));
         }
     }
 
@@ -72,16 +86,16 @@ public class PipelineContainerImpl extends BluePipelineContainer {
         return item instanceof WorkflowJob && item.getParent() instanceof MultiBranchProject;
     }
 
-    protected static Iterator<BluePipeline> getPipelines(Collection<? extends Item> items){
+    protected static Iterator<BluePipeline> getPipelines(OrganizationImpl organization, Collection<? extends Item> items){
         List<BluePipeline> pipelines = new ArrayList<>();
         for (Item item : items) {
             if(item instanceof MultiBranchProject){
-                pipelines.add(new MultiBranchPipelineImpl((MultiBranchProject) item));
+                pipelines.add(new MultiBranchPipelineImpl(organization, (MultiBranchProject) item));
             }else if(item instanceof BuildableItem && !isMultiBranchProjectJob((BuildableItem) item)
                 && item instanceof Job){
-                pipelines.add(new PipelineImpl((Job) item));
+                pipelines.add(new PipelineImpl(organization, (Job) item));
             }else if(item instanceof ItemGroup){
-                pipelines.add(new PipelineFolderImpl((ItemGroup) item));
+                pipelines.add(new PipelineFolderImpl(organization, (ItemGroup) item));
             }
         }
         return pipelines.iterator();

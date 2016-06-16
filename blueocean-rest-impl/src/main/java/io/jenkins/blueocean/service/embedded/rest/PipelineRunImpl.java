@@ -16,8 +16,8 @@ import java.util.Map;
  * @author Vivek Pandey
  */
 public class PipelineRunImpl extends AbstractRunImpl<WorkflowRun> {
-    public PipelineRunImpl(WorkflowRun run) {
-        super(run);
+    public PipelineRunImpl(PipelineImpl pipeline, WorkflowRun run) {
+        super(pipeline, run);
     }
 
     @Override

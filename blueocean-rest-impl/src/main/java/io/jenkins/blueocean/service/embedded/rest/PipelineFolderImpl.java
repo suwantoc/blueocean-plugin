@@ -15,15 +15,17 @@ public class PipelineFolderImpl extends BluePipelineFolder {
 
     private final ItemGroup folder;
     private final BluePipelineContainer container;
+    final OrganizationImpl organization;
 
-    public PipelineFolderImpl(ItemGroup folder) {
+    public PipelineFolderImpl(OrganizationImpl organization, ItemGroup folder) {
         this.folder = folder;
-        this.container = new PipelineContainerImpl(folder);
+        this.container = new PipelineContainerImpl(organization, folder);
+        this.organization = organization;
     }
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return organization.getName();
     }
 
     @Override
@@ -43,7 +45,7 @@ public class PipelineFolderImpl extends BluePipelineFolder {
 
     @Override
     public BluePipelineContainer getPipelines() {
-        return new PipelineContainerImpl(folder);
+        return new PipelineContainerImpl(organization, folder);
     }
 
     @Override

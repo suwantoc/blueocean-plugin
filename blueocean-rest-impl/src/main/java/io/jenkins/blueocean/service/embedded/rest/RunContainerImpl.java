@@ -16,9 +16,9 @@ import java.util.Iterator;
 public class RunContainerImpl extends BlueRunContainer {
 
     private final Job job;
-    private final BluePipeline pipeline;
+    private final PipelineImpl pipeline;
 
-    public RunContainerImpl(@Nonnull BluePipeline pipeline, @Nonnull Job job) {
+    public RunContainerImpl(@Nonnull PipelineImpl pipeline, @Nonnull Job job) {
         this.job = job;
         this.pipeline = pipeline;
     }
@@ -44,12 +44,12 @@ public class RunContainerImpl extends BlueRunContainer {
         } else {
             run = runList.getLastBuild();
         }
-        return  AbstractRunImpl.getBlueRun(run);
+        return  AbstractRunImpl.getBlueRun(pipeline, run);
     }
 
     @Override
     public Iterator<BlueRun> iterator() {
-        return RunSearch.findRuns(job).iterator();
+        return RunSearch.findRuns(pipeline,job).iterator();
     }
 
     @Override

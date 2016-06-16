@@ -24,9 +24,10 @@ import java.util.Map;
  */
 public class AbstractRunImpl<T extends Run> extends BlueRun {
     protected final T run;
-
-    public AbstractRunImpl(T run) {
+    final PipelineImpl pipeline;
+    public AbstractRunImpl(PipelineImpl pipeline, T run) {
         this.run = run;
+        this.pipeline = pipeline;
     }
 
     //TODO: It serializes jenkins Run model children, enable this code after fixing it
@@ -47,7 +48,7 @@ public class AbstractRunImpl<T extends Run> extends BlueRun {
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return pipeline.organization.getName();
     }
 
     @Override
@@ -155,14 +156,14 @@ public class AbstractRunImpl<T extends Run> extends BlueRun {
         return null; // default
     }
 
-    protected static BlueRun getBlueRun(Run r){
+    protected static BlueRun getBlueRun(PipelineImpl pipeline, Run r){
         //TODO: We need to take care several other job types
         if (r instanceof FreeStyleBuild) {
-            return new FreeStyleRunImpl((FreeStyleBuild)r);
+            return new FreeStyleRunImpl(pipeline, (FreeStyleBuild)r);
         }else if(r instanceof WorkflowRun){
-            return new PipelineRunImpl((WorkflowRun)r);
+            return new PipelineRunImpl(pipeline, (WorkflowRun)r);
         }else{
-            return new AbstractRunImpl<>(r);
+            return new AbstractRunImpl<>(pipeline, r);
         }
     }
 
