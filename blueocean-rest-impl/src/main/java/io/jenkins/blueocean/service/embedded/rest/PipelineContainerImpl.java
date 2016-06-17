@@ -1,5 +1,6 @@
 package io.jenkins.blueocean.service.embedded.rest;
 
+import com.google.common.collect.Lists;
 import hudson.model.BuildableItem;
 import hudson.model.Item;
 import hudson.model.ItemGroup;
@@ -78,7 +79,17 @@ public class PipelineContainerImpl extends BluePipelineContainer {
         } else if (organization.organizationFolder != null) {
             return getPipelines(organization, organization.organizationFolder.getItems());
         }else{
-            return getPipelines(organization, Jenkins.getInstance().getItems(TopLevelItem.class));
+            List<TopLevelItem> items = Jenkins.getInstance().getItems(TopLevelItem.class);
+            List<TopLevelItem> filteredItems = Lists.newArrayList();
+            for (TopLevelItem item : items) {
+                if(item instanceof JenkinsOrganizationFolder) {
+                    continue;
+                } else {
+                    filteredItems.add(item);
+                }
+            }
+
+            return getPipelines(organization, filteredItems);
         }
     }
 
@@ -89,15 +100,51 @@ public class PipelineContainerImpl extends BluePipelineContainer {
     protected static Iterator<BluePipeline> getPipelines(OrganizationImpl organization, Collection<? extends Item> items){
         List<BluePipeline> pipelines = new ArrayList<>();
         for (Item item : items) {
-            if(item instanceof MultiBranchProject){
-                pipelines.add(new MultiBranchPipelineImpl(organization, (MultiBranchProject) item));
-            }else if(item instanceof BuildableItem && !isMultiBranchProjectJob((BuildableItem) item)
-                && item instanceof Job){
-                pipelines.add(new PipelineImpl(organization, (Job) item));
-            }else if(item instanceof ItemGroup){
-                pipelines.add(new PipelineFolderImpl(organization, (ItemGroup) item));
+            BluePipeline pipeline = getPipelineFromItem(item, organization);
+            if(pipeline != null) {
+                pipelines.add(pipeline);
             }
         }
         return pipelines.iterator();
+    }
+
+    protected static Iterator<BluePipeline> getPipelinesCalcOrg(Collection<? extends Item> items){
+        List<BluePipeline> pipelines = new ArrayList<>();
+        for (Item item : items) {
+            OrganizationImpl organization = getParentOrg(item.getParent());
+
+            BluePipeline pipeline = getPipelineFromItem(item, organization);
+            if(pipeline != null) {
+                pipelines.add(pipeline);
+            }
+        }
+        return pipelines.iterator();
+    }
+
+    protected static BluePipeline getPipelineFromItem(Item item, OrganizationImpl organization) {
+        if(item instanceof MultiBranchProject){
+            return new MultiBranchPipelineImpl(organization, (MultiBranchProject) item);
+        }else if(item instanceof BuildableItem && !isMultiBranchProjectJob((BuildableItem) item)
+            && item instanceof Job){
+            return new PipelineImpl(organization, (Job) item);
+        }else if(item instanceof ItemGroup){
+           return new PipelineFolderImpl(organization, (ItemGroup) item);
+        }
+        return null;
+    }
+    protected static OrganizationImpl getParentOrg(ItemGroup group) {
+        if(group == Jenkins.getInstance()) {
+            return new OrganizationImpl();
+        }
+
+        if(group instanceof JenkinsOrganizationFolder) {
+            return new OrganizationImpl((JenkinsOrganizationFolder)group);
+        }
+
+        if(group instanceof Item) {
+            return getParentOrg(((Item) group).getParent());
+        } else {
+            throw new ServiceException.UnexpectedErrorException("Can't find parent org");
+        }
     }
 }
