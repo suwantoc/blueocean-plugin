@@ -25,7 +25,7 @@ import {
 
 const { func, object, array, any, string } = PropTypes;
 
-class RunDetails extends Component {
+export class RunDetails extends Component {
     componentWillMount() {
         if (this.context.config && this.context.params) {
             const {
@@ -100,8 +100,9 @@ class RunDetails extends Component {
 
             location.pathname = this.opener || fallbackUrl;
             location.hash = `#${branch}-${runId}`;
+            console.log('test!!!!!!!!!!!!!!!!!!');
 
-            router.push(location);
+            this.props.navigateToLocation(router, location);
         };
 
         return (
@@ -156,6 +157,7 @@ RunDetails.propTypes = {
     fetchRunsIfNeeded: func,
     setPipeline: func,
     getPipeline: func,
+    navigateToLocation: func,
     previous: string,
 };
 

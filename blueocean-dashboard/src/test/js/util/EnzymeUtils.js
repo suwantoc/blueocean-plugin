@@ -16,6 +16,8 @@ export const prepareMount = () => {
     const exposedProperties = ['window', 'navigator', 'document'];
     global.document = jsdom('');
     global.window = document.defaultView;
+    global.window.requestAnimationFrame = function() {};
+    global.window.cancelAnimationFrame = function() {};
     Object.keys(document.defaultView).forEach((property) => {
         if (typeof global[property] === 'undefined') {
             exposedProperties.push(property);

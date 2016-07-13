@@ -824,4 +824,10 @@ export const actions = {
                 payload: null,
             });
     },
+
+    navigateToLocation(router, location, event) {
+        return () => {
+            console.log('hi');
+        };
+    },
 };
