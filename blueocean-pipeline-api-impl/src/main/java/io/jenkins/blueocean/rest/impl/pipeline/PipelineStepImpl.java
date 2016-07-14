@@ -1,8 +1,9 @@
-package io.jenkins.blueocean.service.embedded.rest;
+package io.jenkins.blueocean.rest.impl.pipeline;
 
 import io.jenkins.blueocean.rest.hal.Link;
 import io.jenkins.blueocean.rest.model.BluePipelineStep;
 import io.jenkins.blueocean.rest.model.BlueRun;
+import io.jenkins.blueocean.service.embedded.rest.LogResource;
 import org.jenkinsci.plugins.workflow.actions.LogAction;
 import org.jenkinsci.plugins.workflow.actions.TimingAction;
 import org.jenkinsci.plugins.workflow.graph.FlowNode;

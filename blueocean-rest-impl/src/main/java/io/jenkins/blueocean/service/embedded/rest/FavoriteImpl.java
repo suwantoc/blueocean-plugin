@@ -5,7 +5,6 @@ import io.jenkins.blueocean.rest.Reachable;
 import io.jenkins.blueocean.rest.hal.Link;
 import io.jenkins.blueocean.rest.hal.LinkResolver;
 import io.jenkins.blueocean.rest.model.BlueFavorite;
-import jenkins.model.Jenkins;
 import io.jenkins.blueocean.service.embedded.util.FavoriteUtil;
 
 /**
@@ -23,9 +22,8 @@ public class FavoriteImpl extends BlueFavorite {
 
     public FavoriteImpl(Item item, Reachable parent) {
         this.self = parent.getLink().rel(FavoriteUtil.encodeFullName(item.getFullName()));
-        LinkResolver linkResolver = Jenkins.getInstance().getInjector().getInstance(LinkResolver.class);
 
-        final Link link = linkResolver.resolve(item);
+        final Link link = LinkResolver.resolveLink(item);
 
         this.item = BluePipelineFactory.getPipelineInstance(item, new Reachable() {
                 @Override
