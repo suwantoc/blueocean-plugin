@@ -74,11 +74,14 @@ export class Activity extends Component {
         // the Branches/PRs tab.
         const showRunButton = (pipeline && !Pipeline.isMultibranch(pipeline));
 
+
         if (!runs.length) {
             return (<EmptyState repoName={this.context.params.pipeline} showRunButton={showRunButton} pipeline={pipeline} />);
         }
 
-        const headers = [
+        // We only want to show branch column for multibranch
+        const showBranchCol = (pipeline && Pipeline.isMultibranch(pipeline));
+        const headers = showBranchCol ? [
             'Status',
             'Build',
             'Commit',
@@ -87,8 +90,16 @@ export class Activity extends Component {
             { label: 'Duration', className: 'duration' },
             { label: 'Completed', className: 'completed' },
             { label: '', className: 'actions' },
+        ] : [
+            'Status',
+            'Build',
+            'Commit',
+            { label: 'Message', className: 'message' },
+            { label: 'Duration', className: 'duration' },
+            { label: 'Completed', className: 'completed' },
+            { label: '', className: 'actions' },
         ];
-        
+
 
         return (<main>
             <article className="activity">
