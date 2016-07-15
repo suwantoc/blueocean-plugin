@@ -40,7 +40,7 @@ public class PipelineImpl extends BluePipeline {
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return OrganizationImpl.DEFAULT_ORGANIZATION.getName();
     }
 
     @Override
@@ -120,7 +120,7 @@ public class PipelineImpl extends BluePipeline {
 
     @Override
     public Link getLink() {
-        return OrganizationImpl.INSTANCE.getLink().rel("pipelines").rel(getRecursivePathFromFullName(this));
+        return OrganizationImpl.DEFAULT_ORGANIZATION.getLink().rel("pipelines").rel(getRecursivePathFromFullName(this));
     }
 
     protected static String getRecursivePathFromFullName(BluePipeline pipeline){

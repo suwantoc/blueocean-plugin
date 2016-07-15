@@ -56,7 +56,7 @@ public abstract class BluePipelineFactory implements ExtensionPoint {
         Item nextStep = findNextStep(Jenkins.getInstance(), item);
 
         for (BluePipelineFactory f : all()) {
-            Resource r = f.resolve(nextStep, OrganizationImpl.INSTANCE.getPipelines(), item);
+            Resource r = f.resolve(nextStep, OrganizationImpl.DEFAULT_ORGANIZATION.getPipelines(), item);
             if (r!=null)    return r;
         }
         return null;

@@ -36,7 +36,7 @@ public class PipelineFolderImpl extends BluePipelineFolder {
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return OrganizationImpl.DEFAULT_ORGANIZATION.getName();
     }
 
     @Override
@@ -99,7 +99,7 @@ public class PipelineFolderImpl extends BluePipelineFolder {
 
     @Override
     public Link getLink() {
-        return OrganizationImpl.INSTANCE.getLink().rel("pipelines").rel(getRecursivePathFromFullName(this));
+        return OrganizationImpl.DEFAULT_ORGANIZATION.getLink().rel("pipelines").rel(getRecursivePathFromFullName(this));
     }
 
     @Extension(ordinal = 0)

@@ -10,6 +10,7 @@ import io.jenkins.blueocean.rest.model.BluePipelineContainer;
 import io.jenkins.blueocean.rest.model.BlueUser;
 import io.jenkins.blueocean.rest.model.BlueUserContainer;
 import jenkins.model.Jenkins;
+import org.jenkinsci.plugins.jenkinsorganizations.JenkinsOrganizationFolder;
 import org.kohsuke.stapler.WebMethod;
 import org.kohsuke.stapler.verb.DELETE;
 import org.kohsuke.stapler.verb.PUT;
@@ -24,20 +25,28 @@ import java.io.IOException;
  */
 public class OrganizationImpl extends BlueOrganization {
     private final UserContainerImpl users = new UserContainerImpl(this);
-
+    final JenkinsOrganizationFolder organizationFolder;
     /**
      * In embedded mode, there's only one organization
      */
-    public static final OrganizationImpl INSTANCE = new OrganizationImpl();
+    public static final OrganizationImpl DEFAULT_ORGANIZATION = new OrganizationImpl();
+    public OrganizationImpl(JenkinsOrganizationFolder organizationFolder) {
+        this.organizationFolder = organizationFolder;
+    }
 
     private OrganizationImpl() {
+        this(null);
     }
 
     /**
      * In embedded mode, there's only one organization
      */
     public String getName() {
-        return Jenkins.getInstance().getDisplayName().toLowerCase();
+        if(organizationFolder == null) {
+            return Jenkins.getInstance().getDisplayName().toLowerCase();
+        } else {
+            return organizationFolder.getDisplayName();
+        }
     }
 
     @Override
@@ -77,7 +86,7 @@ public class OrganizationImpl extends BlueOrganization {
         if(user == null){
             throw new ServiceException.NotFoundException("No authenticated user found");
         }
-        return new UserImpl(user,new UserContainerImpl(OrganizationImpl.INSTANCE));
+        return new UserImpl(user,new UserContainerImpl(OrganizationImpl.DEFAULT_ORGANIZATION));
     }
 
     @Override

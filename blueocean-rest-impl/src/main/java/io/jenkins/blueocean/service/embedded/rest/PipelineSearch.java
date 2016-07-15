@@ -48,7 +48,7 @@ public class PipelineSearch extends OmniSearch<BluePipeline>{
         String s = q.param(EXCLUDED_FROM_FLATTENING_PARAM);
         String org = q.param(ORGANIZATION_PARAM);
 
-        if(org!=null && !OrganizationImpl.INSTANCE.getName().equals(org)){
+        if(org!=null && !OrganizationImpl.DEFAULT_ORGANIZATION.getName().equals(org)){
             throw new ServiceException.BadRequestExpception(
                 String.format("Organization %s not found. Query parameter %s value: %s is invalid. ", org,ORGANIZATION_PARAM,org));
         }

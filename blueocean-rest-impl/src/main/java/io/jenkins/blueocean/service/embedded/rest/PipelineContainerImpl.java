@@ -21,21 +21,23 @@ import java.util.List;
 public class PipelineContainerImpl extends BluePipelineContainer {
     private final @Nonnull ItemGroup itemGroup;
     private final Link self;
+    final OrganizationImpl organization;
 
-    public PipelineContainerImpl() {
-        this(Jenkins.getInstance(),null);
+    public PipelineContainerImpl(OrganizationImpl organization) {
+        this(Jenkins.getInstance(), organization, null);
     }
 
-    public PipelineContainerImpl(ItemGroup itemGroup) {
-        this(itemGroup,null);
+    public PipelineContainerImpl(ItemGroup itemGroup, OrganizationImpl organization) {
+        this(itemGroup, organization, null);
     }
 
-    public PipelineContainerImpl(ItemGroup itemGroup, Reachable parent) {
+    public PipelineContainerImpl(ItemGroup itemGroup, OrganizationImpl organization, Reachable parent) {
         this.itemGroup = itemGroup;
+        this.organization = organization;
         if(parent!=null){
             this.self = parent.getLink().rel("pipelines");
         }else{
-            this.self = OrganizationImpl.INSTANCE.getLink().rel("pipelines");
+            this.self = organization.getLink().rel("pipelines");
         }
     }
     @Override

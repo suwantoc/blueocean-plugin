@@ -58,7 +58,7 @@ public class AbstractRunImpl<T extends Run> extends BlueRun {
 
     @Override
     public String getOrganization() {
-        return OrganizationImpl.INSTANCE.getName();
+        return OrganizationImpl.DEFAULT_ORGANIZATION.getName();
     }
 
     @Override
@@ -247,7 +247,7 @@ public class AbstractRunImpl<T extends Run> extends BlueRun {
     @Override
     public Link getLink() {
         if(parent == null){
-            return OrganizationImpl.INSTANCE.getLink().rel(String.format("pipelines/%s/runs/%s", run.getParent().getName(), getId()));
+            return OrganizationImpl.DEFAULT_ORGANIZATION.getLink().rel(String.format("pipelines/%s/runs/%s", run.getParent().getName(), getId()));
         }
         return parent.rel("runs/"+getId());
     }

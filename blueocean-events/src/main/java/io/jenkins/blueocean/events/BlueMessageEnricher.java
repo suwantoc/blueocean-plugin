@@ -56,7 +56,7 @@ public class BlueMessageEnricher extends MessageEnricher {
     public void enrich(@Nonnull Message message) {
 
         // TODO: Replace once https://issues.jenkins-ci.org/browse/JENKINS-36286 is done
-        message.set(EventProps.Jenkins.jenkins_org, OrganizationImpl.INSTANCE.getName());
+        message.set(EventProps.Jenkins.jenkins_org, OrganizationImpl.DEFAULT_ORGANIZATION.getName());
 
         String channelName = message.getChannelName();
         if (channelName.equals(Events.JobChannel.NAME)) {
@@ -80,7 +80,7 @@ public class BlueMessageEnricher extends MessageEnricher {
 
     // TODO: Replace once https://issues.jenkins-ci.org/browse/JENKINS-36286 is done
     private static @Nonnull Link getLink(@Nonnull ParameterizedJobMixIn.ParameterizedJob job) {
-        Link orgLink = new Link("/rest/organizations/" + OrganizationImpl.INSTANCE.getName());
+        Link orgLink = new Link("/rest/organizations/" + OrganizationImpl.DEFAULT_ORGANIZATION.getName());
 
         if (job instanceof WorkflowJob) {
             ItemGroup<? extends Item> parent = job.getParent();
